@@ -3,9 +3,9 @@
 {% block title %} Профиль пользователя {% endblock %}
 
 {% block content %}
-<h2>Профиль пользователя {{ user.name }}</h2>
+<h2>Профиль пользователя {{ user.username }}</h2>
 {% if user.first_name and user.last_name %}
-<p>Здраствуйте, {{ user.name }} {{user.last_name }}!</p>
+<p>Здраствуйте, {{ user.first_name }} {{user.last_name }}!</p>
 {% else %}
 <p>Здраствуйте!</p>
 {% endif %}
