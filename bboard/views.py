@@ -11,9 +11,41 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.views import PasswordChangeView
+from django.views.generic.base import TemplateView
+from django.core.signing import BadSignature
+from django.views.generic.edit import CreateView
 
 from .models import AdvUser
 from .forms import ChengeUserInfoForm
+from .forms import RegisterUserForm
+from .utilities import signer
+
+#Страница активации пользователя
+def user_activate(request, sign):
+	try:
+		username = signer.unsign(sign)
+	except BadSignature:
+		return render(request, 'bboard/bad_signature.html')
+	user = get_object_or_404(AdvUser, username=username)
+	if user.is_activated:
+		template = 'bboard/user_is_activated.html'
+	else:
+		template = 'bboard/activation_done.html'
+		user.is_active = True
+		user.is_activated = True
+		user.save()
+	return render(request, template)
+
+#Страница об успешной регистрации ользователя
+class RegisterDoneView(TemplateView):
+	template_name = 'bboard/register_done'
+
+#Страница регистрации пользователя
+class RegisterUserView(CreateView):
+	model = AdvUser
+	template_name = 'bboard/register_user.html'
+	form_class = RegisterUserForm
+	success_url = reverse_lazy('bboard:register_done')
 
 #Страница смены пароля
 class BBPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin,
@@ -29,7 +61,7 @@ class ChengeUserInfoView(SuccessMessageMixin, LoginRequiredMixin,
 	template_name = 'bboard/change_user_info.html' # используемый шаблон
 	form_class = ChengeUserInfoForm # используемая форма
 	success_url = reverse_lazy('bboard:profile')
-	success_message = 'Личные данные пользователя изменены' 
+	success_message = 'Личные данные пользователя изменены' #всплывающее сообщение
 
 	def dispatch(self, request, *args, **kwargs):
 		self.user_id = request.user.pk #-извлекаем и сохраняем ключ пользователя
