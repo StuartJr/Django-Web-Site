@@ -10,24 +10,32 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin 
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.views import PasswordChangeView
 
 from .models import AdvUser
 from .forms import ChengeUserInfoForm
 
+#Страница смены пароля
+class BBPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin,
+												PasswordChangeView):
+	template_name = 'bboard/password_change.html'
+	success_url = reverse_lazy('bboard:profile')
+	success_message = 'Пароль пользователя изменён'
 
+#Страница с изменение личных данных пользователя
 class ChengeUserInfoView(SuccessMessageMixin, LoginRequiredMixin,
 											UpdateView):
-	model = AdvUser
-	template_name = 'bboard/change_user_info.html'
-	form_class = ChengeUserInfoForm
+	model = AdvUser # используемая модель
+	template_name = 'bboard/change_user_info.html' # используемый шаблон
+	form_class = ChengeUserInfoForm # используемая форма
 	success_url = reverse_lazy('bboard:profile')
-	success_message = 'Личные данные пользователя изменены'
+	success_message = 'Личные данные пользователя изменены' 
 
 	def dispatch(self, request, *args, **kwargs):
-		self.user_id = request.user.pk
+		self.user_id = request.user.pk #-извлекаем и сохраняем ключ пользователя
 		return super().dispatch(request, *args, **kwargs)
 
-	def get_object(self, queryset=None):
+	def get_object(self, queryset=None): #-извлекаем исправляемую запись
 		if not queryset:
 			queryset = self.get_queryset()
 		return get_object_or_404(queryset, pk=self.user_id)
