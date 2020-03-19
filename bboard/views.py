@@ -14,25 +14,48 @@ from django.contrib.auth.views import PasswordChangeView
 from django.views.generic.base import TemplateView
 from django.core.signing import BadSignature
 from django.views.generic.edit import CreateView
+from django.views.generic.edit import DeleteView
+from django.contrib.auth import logout
+from django.contrib import messages
 
 from .models import AdvUser
 from .forms import ChengeUserInfoForm
 from .forms import RegisterUserForm
 from .utilities import signer
 
+class DeleteUserView(LoginRequiredMixin, DeleteView):
+	model = AdvUser
+	template_name = 'bboard/delete_user.html'
+	success_url = reverse_lazy('bboard:index')
+
+	def dispatch(self, request, *args, **kwargs):
+		self.user_id = request.user.pk #-извлекаем и сохраняем ключ пользователя
+		return super().dispatch(request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		logout(request)
+		messages.add_message(request, messages.SUCCESS,
+										'Пользователь удалён')
+		return super().post(request, *args, **kwargs)
+
+	def get_object(self, queryset=None): #-извлекаем исправляемую запись
+		if not queryset:
+			queryset = self.get_queryset()
+		return get_object_or_404(queryset, pk=self.user_id)
+
 #Страница активации пользователя
 def user_activate(request, sign):
 	try:
 		username = signer.unsign(sign)
 	except BadSignature:
-		return render(request, 'bboard/bad_signature.html')
+		return render(request, 'bboard/bad_signature.html') #Активация пользователя с таким именем прошла неудачно
 	user = get_object_or_404(AdvUser, username=username)
-	if user.is_activated:
+	if user.is_activated: #Активация пользователя с таким именем был активирован ранее
 		template = 'bboard/user_is_activated.html'
-	else:
+	else: #Пользователь с таким именем успешно активирован
 		template = 'bboard/activation_done.html'
-		user.is_active = True
-		user.is_activated = True
+		user.is_active = True #пользователь активен
+		user.is_activated = True #пользователь активирован
 		user.save()
 	return render(request, template)
 

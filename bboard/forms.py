@@ -11,9 +11,9 @@ class RegisterUserForm(forms.ModelForm):
 	password1 = forms.CharField(label = 'Пароль', 
 		widget=forms.PasswordInput,
 		help_text = password_validation.password_validators_help_text_html())
-	password2 = forms.CharField(label = 'Пороль (повторно)',
+	password2 = forms.CharField(label = 'Пароль (повторно)',
 		widget = forms.PasswordInput,
-		help_text = 'Введите пороль ещё раз для проверки')
+		help_text = 'Введите пароль ещё раз для проверки')
 
 	def clean_password(self): #- проверяем пароль на корректность
 		password1=self.cleaned_data['password1']

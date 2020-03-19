@@ -8,7 +8,8 @@ from .views import profile
 from .views import ChengeUserInfoView
 from .views import BBPasswordChangeView
 from .views import RegisterUserView, RegisterDoneView
-from .views import user_activate 
+from .views import user_activate
+from .views import DeleteUserView
 
 app_name='bboard'
 urlpatterns = [
@@ -20,6 +21,8 @@ urlpatterns = [
 		name = 'register'),
 	path('accounts/password/change/', BBPasswordChangeView.as_view(), 
 		name = 'password_change'),
+	path('accounts/profile/delete/', DeleteUserView.as_view(),
+		name = 'profile_delete'),
 	path('accounts/profile/change/', ChengeUserInfoView.as_view(), 
 		name = 'profile_change'),
 	path('accounts/profile/', profile, name = 'profile'),
