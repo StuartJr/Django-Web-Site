@@ -23,8 +23,8 @@ class RegisterUserForm(forms.ModelForm):
 
 	def clean(self): #- проверяем совпадают ли пароли
 		super().clean()
-		password1=self.cleaned_data['password1']
-		password2=self.cleaned_data['password2']
+		password1=self.cleaned_data['password1']#получаем данные через объект cleaned_data
+		password2=self.cleaned_data['password2']#получаем данные через объект cleaned_data
 		if password1 and password2 and password1 != password2:
 			errors = {'password2': ValidationError(
 				'Введенные пароли не совпадают', code = 'password_mismatch')}
@@ -32,12 +32,12 @@ class RegisterUserForm(forms.ModelForm):
 
 	def save(self, commit=True): #-сохраняем пользователя
 		user = super().save(commit=False)
-		user.set_password(self.cleaned_data['password1'])
-		user.is_active = False
-		user.is_activated = False 
+		user.set_password(self.cleaned_data['password1']) # устанавливаем пороль пользователя
+		user.is_active = False #при создание нового пользователя он не активен
+		user.is_activated = False #при создание нового пользователя он не прошёл активацию
 		if commit:
 			user.save()
-		user_registrated.send(RegisterUserForm, instance=user)
+		user_registrated.send(RegisterUserForm, instance=user)#если такой аргумент указан(instance), то save() обновит переданную модель
 		return user
 
 	class Meta:
@@ -46,7 +46,7 @@ class RegisterUserForm(forms.ModelForm):
 		 		'first_name', 'last_name', 'send_messages')
 
 class ChengeUserInfoForm(forms.ModelForm):
-	email = forms.EmailField(required=True,
+	email = forms.EmailField(required=True,#обязательно к заполнению
 							label='Адрес электронной почты')
 
 	class Meta:

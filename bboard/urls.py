@@ -11,7 +11,7 @@ from .views import RegisterUserView, RegisterDoneView
 from .views import user_activate
 from .views import DeleteUserView
 
-app_name='bboard'
+app_name='bboard' #Название приложения из пространства имён для сопоставления URL-адресов.
 urlpatterns = [
 	path('accounts/register/activate/<str:sign>', user_activate,
 	 	name = 'register_activate'),

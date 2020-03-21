@@ -46,7 +46,7 @@ class DeleteUserView(LoginRequiredMixin, DeleteView):
 #Страница активации пользователя
 def user_activate(request, sign):
 	try:
-		username = signer.unsign(sign)
+		username = signer.unsign(sign)#цифровая подпись
 	except BadSignature:
 		return render(request, 'bboard/bad_signature.html') #Активация пользователя с таким именем прошла неудачно
 	user = get_object_or_404(AdvUser, username=username)
@@ -75,7 +75,7 @@ class BBPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin,
 												PasswordChangeView):
 	template_name = 'bboard/password_change.html'
 	success_url = reverse_lazy('bboard:profile')
-	success_message = 'Пароль пользователя изменён'
+	success_message = 'Пароль пользователя изменён' #всплывающее сообщение
 
 #Страница с изменение личных данных пользователя
 class ChengeUserInfoView(SuccessMessageMixin, LoginRequiredMixin,
@@ -83,12 +83,13 @@ class ChengeUserInfoView(SuccessMessageMixin, LoginRequiredMixin,
 	model = AdvUser # используемая модель
 	template_name = 'bboard/change_user_info.html' # используемый шаблон
 	form_class = ChengeUserInfoForm # используемая форма
-	success_url = reverse_lazy('bboard:profile')
+	success_url = reverse_lazy('bboard:profile') #страница, которая используется в случае успешного проведения операции
+	#reverse_lazt - Эта функция может быть полезна в случае, если вам нужно вернуть URL-адрес прежде, чем ваши настройки URLConf будут загружены.
 	success_message = 'Личные данные пользователя изменены' #всплывающее сообщение
 
 	def dispatch(self, request, *args, **kwargs):
 		self.user_id = request.user.pk #-извлекаем и сохраняем ключ пользователя
-		return super().dispatch(request, *args, **kwargs)
+		return super().dispatch(request, *args, **kwargs) #super()-возможность использования в классе потомке, методов класса-родителя.
 
 	def get_object(self, queryset=None): #-извлекаем исправляемую запись
 		if not queryset:

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap4',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -64,12 +65,25 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'Avito.wsgi.application'
+
+#Регистрация и вход через VK
+
+AUTHENTICATION_BACKENDS = (
+        'social_core.backends.vk.VKOAuth2',
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7368042'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'zEjxhL6HcfsvGWlDfzK6'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 #Разграничение доступа (ставим свою модель AdvUser)
 AUTH_USER_MODEL = 'bboard.AdvUser'

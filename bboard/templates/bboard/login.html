@@ -11,6 +11,8 @@
 {% else %}
 <form method="post">
 	{% csrf_token %}
+	<a href="{% url 'social:begin' 'vk-oauth2' %}">
+	Войти через ВКонтакте</a>
 	{% bootstrap_form form layout='horisontal' %}
 	<input type="hidden" name="next" value="{{next}}">
 	{% buttons submit='Войти' %} {% endbuttons %}
