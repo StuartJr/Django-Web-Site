@@ -4,6 +4,16 @@ from django.core.exceptions import ValidationError
 
 from .models import AdvUser
 from .models import user_registrated
+from .models import SuperRubric, SubRubric
+
+class SubRubricForm(forms.ModelForm):
+	super_rubric = forms.ModelChoiceField(
+					queryset = SuperRubric.objects.all(), empty_label=None,
+					label='Надрубрики', required=True)
+
+	class Meta:
+		model = SubRubric
+		fields = '__all__'
 
 class RegisterUserForm(forms.ModelForm):
 	email = forms.EmailField(required=True,

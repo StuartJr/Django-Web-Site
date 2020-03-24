@@ -23,6 +23,9 @@ from .forms import ChengeUserInfoForm
 from .forms import RegisterUserForm
 from .utilities import signer
 
+def by_rubric(request, pk):
+	pass
+
 class DeleteUserView(LoginRequiredMixin, DeleteView):
 	model = AdvUser
 	template_name = 'bboard/delete_user.html'
