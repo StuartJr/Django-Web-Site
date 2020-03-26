@@ -1,6 +1,11 @@
 from django.template.loader import render_to_string
 from django.core.signing import Signer
 from Avito.settings import ALLOWED_HOSTS
+from datetime import datetime
+from os.path import splitext
+
+def get_timestamp_path(instance, filename):#генерация имен сохраняемых в моделях выгруженных файлов
+	return '%s%s' % (datetime.now().timestamp(), splitext(filename)[1])
 
 signer = Signer()
 

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap4',
     'social_django',
+    'django_cleanup',
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +76,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Avito.wsgi.application'
+
+#Работа с изображениями 
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+THUMBNALL_ALIASES = {
+    '':{
+        'default':(96, 96),
+        'crop': 'scale',
+    }
+}
 
 #Регистрация и вход через VK
 
@@ -138,4 +152,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+
+
 

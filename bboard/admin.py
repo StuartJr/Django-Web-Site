@@ -4,7 +4,18 @@ from .models import AdvUser
 from .utilities import send_activation_notification
 from .models import SuperRubric, SubRubric
 from .forms import SubRubricForm
+from .models import Bb, AdditionalImage
 
+class AdditionalImageInline(admin.TabularInline):
+	model = AdditionalImage
+
+class BbAdmin(admin.ModelAdmin):
+	list_display = ('rubric', 'title', 'content', 'author', 'created_at')
+	fields = (('rubric', 'author'), 'title', 'content', 'price',
+			'contacts', 'image', 'is_active')
+	inlines = (AdditionalImageInline,)
+
+admin.site.register(Bb, BbAdmin)
 
 class SubRubricAdmin(admin.ModelAdmin):
 	form = SubRubricForm
@@ -15,7 +26,7 @@ class SubRubricInline(admin.TabularInline):
 	model = SubRubric
 
 class SuperRubricAdmin(admin.ModelAdmin):
-	exclude = ('super_rubric',)
+	exclude = ('super_rubric',) #уберем из формы ввода и правки надрубрик
 	inlines = (SubRubricInline,)
 
 admin.site.register(SuperRubric, SuperRubricAdmin)
