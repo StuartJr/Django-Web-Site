@@ -10,7 +10,7 @@ class AdditionalImageInline(admin.TabularInline):
 	model = AdditionalImage
 
 class BbAdmin(admin.ModelAdmin):
-	list_display = ('rubric', 'title', 'content', 'author', 'created_at')
+	list_display = ('rubric', 'title', 'content', 'author', 'created_at')#указывает какие поля отображать на странице
 	fields = (('rubric', 'author'), 'title', 'content', 'price',
 			'contacts', 'image', 'is_active')
 	inlines = (AdditionalImageInline,)

@@ -82,12 +82,15 @@ WSGI_APPLICATION = 'Avito.wsgi.application'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-THUMBNALL_ALIASES = {
-    '':{
-        'default':(96, 96),
+THUMBNAIL_ALIASES = {
+    '': {
+        'default':{
+        'size':(96, 96),
         'crop': 'scale',
-    }
+        },
+    },
 }
+THUMBNAIL_BASEDIR = 'thumbnails'
 
 #Регистрация и вход через VK
 

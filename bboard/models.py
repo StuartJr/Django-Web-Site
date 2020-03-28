@@ -95,7 +95,7 @@ class Bb(models.Model):
 		verbose_name = 'Объявление'
 		ordering = ['created_at']
 
-class AdditionalImage(models.Model):
+class AdditionalImage(models.Model):#дополнительные иллюстрации
 	bb = models.ForeignKey(Bb, on_delete=models.CASCADE,
 							verbose_name = 'Объявление')
 	image = models.ImageField(upload_to = get_timestamp_path,

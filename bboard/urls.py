@@ -11,7 +11,9 @@ from .views import RegisterUserView, RegisterDoneView
 from .views import user_activate
 from .views import DeleteUserView
 from .views import by_rubric
-from .views import detail 
+from .views import detail
+from .views import profile_bb_detail
+from .views import profile_bb_add, profile_bb_change, profile_bb_delete
 
 app_name='bboard' #Название приложения из пространства имён для сопоставления URL-адресов.
 urlpatterns = [
@@ -27,6 +29,14 @@ urlpatterns = [
 		name = 'profile_delete'),
 	path('accounts/profile/change/', ChengeUserInfoView.as_view(), 
 		name = 'profile_change'),
+	path('accounts/profile/change/<int:pk>', profile_bb_change, 
+									name = 'profile_bb_change'),
+	path('accounts/profile/delete/<int:pk>', profile_bb_delete,
+									name = 'profile_bb_delete'),
+	path('accounts/profile/add/', profile_bb_add,
+									name = 'profile_bb_add'),
+	path('accounts/profile/<int:pk>', profile_bb_detail, 
+										name = 'profile_bb_detail'),
 	path('accounts/profile/', profile, name = 'profile'),
 	path('accounts/logout/', BBLogoutView.as_view(), name = 'logout'),
 	path('<int:rubric_pk>/<int:pk>/', detail, name = 'detail'),
