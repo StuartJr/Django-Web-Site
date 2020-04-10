@@ -4,6 +4,19 @@ from Avito.settings import ALLOWED_HOSTS
 from datetime import datetime
 from os.path import splitext
 
+# def send_new_comment_notification(comment):
+# 	if ALLOWED_HOSTS:
+# 		host = 'http://' + ALLOWED_HOSTS[0]
+# 	else:
+# 		host = 'http://localhost8000'
+# 	author = comment.bb.author
+# 	context = {'author':author, 'host':host, 'comment':comment}
+# 	subject = render_to_string('email/new_comment_letter_subject.txt',
+# 								context)
+# 	body_text = render_to_string('email/new_comment_letter_body.txt',
+# 									context)
+# 	author.email_user(subject, body_text)
+
 def get_timestamp_path(instance, filename):#генерация имен сохраняемых в моделях выгруженных файлов
 	return '%s%s' % (datetime.now().timestamp(), splitext(filename)[1])
 

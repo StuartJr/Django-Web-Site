@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.dispatch import Signal
 from .utilities import send_activation_notification
 from .utilities import get_timestamp_path
+from django.db.models.signals import post_save
+# from .utilities import send_new_comment_notification
+
 
 
 
@@ -13,7 +16,7 @@ def user_registrated_dispatcher(sender, **kwargs):
 
 user_registrated.connect(user_registrated_dispatcher)
 
-class AdvUser(AbstractUser):
+class AdvUser(AbstractUser): #модель пользователя
 	is_activated = models.BooleanField(default=True, db_index=True,
 										verbose_name = 'Прошёл активацию?')
 	send_messages = models.BooleanField(default=True, 
@@ -27,7 +30,7 @@ class AdvUser(AbstractUser):
 	class Meta(AbstractUser.Meta):
 		pass
 
-class Rubric(models.Model):
+class Rubric(models.Model):#модель рубрик
 	name = models.CharField(max_length=20, db_index=True, unique=True,
 							verbose_name='Название')
 	order = models.SmallIntegerField(default = 0, db_index=True,
@@ -69,7 +72,9 @@ class SuperRubric(Rubric):
 		verbose_name = 'Надрубрика'
 		verbose_name_plural = 'Надрубрика'
 
-class Bb(models.Model):
+
+
+class Bb(models.Model): #основаня модель объявлений
 	rubric = models.ForeignKey(SubRubric, on_delete=models.PROTECT,
 								verbose_name = 'Рубрика')
 	title = models.CharField(max_length=40, verbose_name = 'Товар')
@@ -95,6 +100,21 @@ class Bb(models.Model):
 		verbose_name = 'Объявление'
 		ordering = ['created_at']
 
+class Comment(models.Model):#коментраий
+	bb = models.ForeignKey(Bb, on_delete=models.CASCADE,
+							verbose_name = 'Объявление')
+	author = models.CharField(max_length = 30,
+								verbose_name = 'Автор')
+	content = models.TextField(verbose_name = 'Содержание')
+	is_active = models.BooleanField(default = True, db_index=True,
+									verbose_name = 'Выводить на экран')
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True,
+										verbose_name='Опубликован')
+	class Meta:
+		verbose_name_plural = 'Комментарии'
+		verbose_name = 'Комментарии'
+		ordering = ['created_at']#сортировка по увелечению даты и времени
+
 class AdditionalImage(models.Model):#дополнительные иллюстрации
 	bb = models.ForeignKey(Bb, on_delete=models.CASCADE,
 							verbose_name = 'Объявление')
@@ -104,7 +124,14 @@ class AdditionalImage(models.Model):#дополнительные иллюстр
 	class Meta:
 		verbose_name_plural = 'Дополнительные иллюстрации'
 		verbose_name = 'Дополнительная иллюстрация'
-		
+
+
+# def post_save_dispatcher(sender,  **kwargs):
+# 	author = kwargs['instance'].bb.author
+# 	if kwargs['created'] and author.send_messages:
+# 		send_new_comment_notification(kwargs['instance'])
+
+# post_save.connect(post_save_dispatcher, sender=Comment)		
 
 
 

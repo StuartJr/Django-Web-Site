@@ -5,6 +5,19 @@ from .utilities import send_activation_notification
 from .models import SuperRubric, SubRubric
 from .forms import SubRubricForm
 from .models import Bb, AdditionalImage
+from .models import Comment
+
+
+class AdminComment(admin.ModelAdmin):
+	list_display = ('author', 'content', 'created_at', 'is_active')
+	list_display_links = ('author', 'content')
+	list_filter = ('is_active',)
+	search_fields = ('author', 'content',)
+	date_hierarchy = 'created_at'
+	fields = ('author', 'content', 'is_active', 'created_at')
+	readonly_fields = ('created_at',)
+
+admin.site.register(Comment, AdminComment)
 
 class AdditionalImageInline(admin.TabularInline):
 	model = AdditionalImage
@@ -78,3 +91,4 @@ class AdvUserAdmin(admin.ModelAdmin):
 
 admin.site.register(AdvUser, AdvUserAdmin)
 # admin.site.register(AdvUser) #-вносим модель AdvUser на админ сайт
+

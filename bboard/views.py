@@ -28,7 +28,11 @@ from .utilities import signer
 from .models import SubRubric, Bb
 from .forms import SearchForm
 from .forms import BbForm, AIFormSet
+from .forms import UserCommentForm, GuestCommentForm
+from .models import Comment
 
+
+#страница исправления объявлений
 @login_required
 def profile_bb_change(request, pk):
 	bb = get_object_or_404(Bb, pk=pk)
@@ -48,6 +52,7 @@ def profile_bb_change(request, pk):
 		context = {'form': form, 'formset':formset}
 		return render(request, 'bboard/profile_bb_change.html', context)
 
+#страница удаления объявлений
 @login_required
 def profile_bb_delete(request, pk):
 	bb = get_object_or_404(Bb, pk=pk)
@@ -60,20 +65,21 @@ def profile_bb_delete(request, pk):
 		context = {'bb':bb }
 		return render(request, 'bboard/profile_bb_delete.html', context)
 
+#страница добавления объявлений
 @login_required
 def profile_bb_add(request):
 	if request.method == 'POST':
 		form = BbForm(request.POST, request.FILES)
 		if form.is_valid():
 			bb = form.save()
-			formset = AIFormSet(request.POST, request.FILES, instance = bb)
+			formset = AIFormSet(request.POST, request.FILES, instance = bb)#связывает добавленные изображения с объявлением
 			if formset.is_valid():
 				formset.save()
 				messages.add_message(request, messages.SUCCESS,
 									'Объявление добавлено')
 				return redirect('bboard:profile')
 	else:
-		form = BbForm(initial = {'author':request.user.pk})
+		form = BbForm(initial = {'author':request.user.pk})#связываем добавленное объявление с пользователем
 		formset = AIFormSet()
 	context = {'form':form, 'formset': formset}
 	return render(request, 'bboard/profile_bb_add.html', context)
@@ -83,15 +89,32 @@ def profile_bb_add(request):
 def profile_bb_detail(request, pk):
     bb = get_object_or_404(Bb, pk=pk)
     ais = bb.additionalimage_set.all()
-    comments = Comment.objects.filter(bb=pk, is_active=True)
-    context = {'bb': bb, 'ais': ais, 'comments': comments}
+    context = {'bb': bb, 'ais': ais, }
     return render(request, 'bboard/profile_bb_detail.html', context)
 
 #страница деталей объявления
 def detail(request, rubric_pk, pk):
 	bb = get_object_or_404(Bb, pk=pk)#выводим модель Bb или ошибку 404
 	ais = bb.additionalimage_set.all()#берём все дополнительные изображения
-	context = {'bb':bb, 'ais':ais }
+	comments = Comment.objects.filter(bb=pk, is_active=True)#только те что активны
+	initial = {'bb':bb.pk}# в поле bb заносим ключ объявление на котором сейчас находимся
+	if request.user.is_authenticated:#если пользователь зарегестрирован
+		initial['author'] = request.user.username #занозим его имя в поле author
+		form_class = UserCommentForm #используем форму для авторизованых пользователей
+	else:
+		form_class = GuestCommentForm #в любом другом случае используем форму для гостя
+	form = form_class(initial=initial)# при выводе нового комментария будет выводить пустую форму
+	if request.method == 'POST':
+		c_form = form_class(request.POST)
+		if c_form.is_valid():
+			c_form.save()#если комментарий успешно добавлен то выводится пустая форма из переменной form
+			messages.add_message(request, messages.SUCCESS,
+									'Комментарий добавлен')
+		else:
+			form = c_form#если нет то выводится комментариий и указываются ошибки из-зи которых он не выведен
+			messages.add_message(request, messages.WARNING,
+								'Комментарий не добавлен')
+	context = {'bb':bb, 'ais':ais, 'comments':comments, 'form':form }
 	return render(request, 'bboard/detail.html', context)
 
 #страница списка обявлений и поиска

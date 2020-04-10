@@ -2,11 +2,27 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
+from captcha.fields import CaptchaField
 
 from .models import AdvUser
 from .models import user_registrated
 from .models import SuperRubric, SubRubric
 from .models import Bb, AdditionalImage
+from .models import Comment
+
+class UserCommentForm(forms.ModelForm):#форма для добавления комментариев авторизованого пользователя
+	class Meta:
+		model = Comment
+		exclude = ('is_active',)#указывет что поле 'is_active' не нужно включать в форму
+		widgets = {'bb': forms.HiddenInput}#скрыли ключ объявления
+
+class GuestCommentForm(forms.ModelForm):#форма для добавления комментариев неавторизованого пользователя
+	captcha = CaptchaField(label='Введите текст с картинки',
+				error_messages = {'invalid':'Неправильный текст'})
+	class Meta:
+		model = Comment
+		exclude = ('is_active',)
+		widgets = {'bb': forms.HiddenInput}
 
 class BbForm(forms.ModelForm):
 	class Meta:
